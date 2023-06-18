@@ -2,18 +2,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from bot.model import poll
 
-def get_poll_kb(current: poll.Question, cd: CallbackData):
+def get_poll_kb(variants:list, current: int, cd: CallbackData):
     keyboard = InlineKeyboardMarkup()
-    print(current.variants)
-    for v in current.variants:
+    for id, v in enumerate(variants):
         print(v)
-        variant_bt = InlineKeyboardButton(text=v, callback_data=cd.new(
-            action="answer",
-            question=current,
-            variant=v
-        ))
+        variant_bt = InlineKeyboardButton(text=v, callback_data=cd.new(question=current, variant=id))
         keyboard.add(variant_bt)
-        
     return keyboard
 
 def get_start_kb():

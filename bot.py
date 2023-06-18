@@ -25,12 +25,11 @@ def register_all_middlewares(dp, config):
 
 def register_all_handlers(dp, config: Config):
     TariffHandler(dp, config=config)
-    PollHandler(dp=dp)
-    #TODO PollHandler(questions=load_questions(), dp=dp)
+    PollHandler(questions=load_questions(), dp=dp)
     register_home_handler(dp)
 
 def load_questions():
-    with open("questions.json") as file:
+    with open("questions.json", encoding='utf-8') as file:
         json_data = file.read()
     j = json.loads(json_data)
     questions: List[poll.Question] = []
