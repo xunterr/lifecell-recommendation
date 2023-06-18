@@ -25,7 +25,7 @@ def register_all_middlewares(dp, config):
 
 def register_all_handlers(dp, config: Config):
     TariffHandler(dp, config=config)
-    PollHandler(questions=load_questions(), dp=dp)
+    PollHandler(questions=load_questions(), dp=dp, config=config)
     register_home_handler(dp)
 
 def load_questions():

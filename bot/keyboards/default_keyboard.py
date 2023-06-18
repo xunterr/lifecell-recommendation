@@ -5,7 +5,6 @@ from bot.model import poll
 def get_poll_kb(variants:list, current: int, cd: CallbackData):
     keyboard = InlineKeyboardMarkup()
     for id, v in enumerate(variants):
-        print(v)
         variant_bt = InlineKeyboardButton(text=v, callback_data=cd.new(question=current, variant=id))
         keyboard.add(variant_bt)
     return keyboard

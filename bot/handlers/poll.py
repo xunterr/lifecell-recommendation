@@ -4,11 +4,14 @@ from aiogram.dispatcher import FSMContext
 from bot.keyboards import default_keyboard
 from typing import List
 from bot.model import poll
+from bot import config
+from bot.api import tariff_recommendation
 from aiogram.utils.callback_data import CallbackData
 
 class PollHandler:
-    def __init__(self, questions: list, dp: Dispatcher) -> None:
+    def __init__(self, questions: list, dp: Dispatcher, config: config.Config) -> None:
         self.questions: List[poll.Question] = questions
+        self.config = config
         self.question_callback = CallbackData("action", "question", "variant")
         self.results = []
         self.current_question = 0
@@ -18,13 +21,19 @@ class PollHandler:
     async def handle_answer(self, callback_query: types.CallbackQuery, callback_data: dict):
         variant = int(callback_data["variant"])
         question = int(callback_data["question"])
+        print(variant)
+        print(question)
+        print(self.questions[question].prepared_variants[variant])
         self.results.append(self.questions[question].prepared_variants[variant])
         await self.display_next_question(callback_query.message)
 
     async def display_next_question(self, msg: types.Message):
         if(len(self.questions) == self.current_question):
             self.current_question=0
-            await msg.answer(text="Опитування завершено, raw results: " + ','.join(self.results))
+            tr = tariff_recommendation.TarifRecommendationAPI(self.config)
+            res = tr.get_recommendation(self.results)
+            await msg.edit_text(text="Опитування завершено, ваш ідеальний тариф - " + res)
+            self.results = []
             return
         q = self.questions[self.current_question]
         keyboard = default_keyboard.get_poll_kb(q.variants, self.current_question, self.question_callback)
